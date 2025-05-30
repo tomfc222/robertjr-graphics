@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sports Graphics Portfolio</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0a0a;
+            color: #ffffff;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            padding: 2rem 0;
+            text-align: center;
+            border-bottom: 1px solid #333;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 200%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.03), transparent);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ffffff 0%, #cccccc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            color: #888;
+            font-weight: 300;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .graphic-card {
+            background: linear-gradient(145deg, #1a1a1a 0%, #2a2a2a 100%);
+            border-radius: 20px;
+            padding: 1.5rem;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid #333;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .graphic-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 50%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            border-radius: 20px;
+        }
+
+        .graphic-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            border-color: #555;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+
+        .graphic-card:hover::before {
+            opacity: 1;
+        }
+
+        .graphic-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #ffffff;
+            text-align: center;
+        }
+
+        .graphic-image {
+            width: 100%;
+            height: 350px;
+            object-fit: cover;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid #333;
+        }
+
+        .graphic-image:hover {
+            border-color: #666;
+            filter: brightness(1.1);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal.active {
+            display: flex;
+            opacity: 1;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            position: relative;
+            max-width: 90vw;
+            max-height: 90vh;
+            transform: scale(0.8);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .modal.active .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-image {
+            max-width: 100%;
+            max-height: 80vh;
+            border-radius: 12px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+        }
+
+        .modal-title {
+            text-align: center;
+            margin-bottom: 1rem;
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .modal-controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-download {
+            background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+            color: #000;
+        }
+
+        .btn-download:hover {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(34, 197, 94, 0.3);
+        }
+
+        .btn-close {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: #fff;
+        }
+
+        .btn-close:hover {
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(239, 68, 68, 0.3);
+        }
+
+        .close {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            color: #aaa;
+            font-size: 2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close:hover {
+            color: #fff;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: #666;
+            font-size: 1.2rem;
+            margin-top: 4rem;
+        }
+
+        .add-graphics-info {
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .add-graphics-info h3 {
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .gallery {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .container {
+                padding: 2rem 1rem;
+            }
+            
+            .modal-controls {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1>Robertjr's Graphics</h1>
+    </header>
+
+    <div class="container">
+        
+
+        <div class="gallery" id="gallery">
+            <!-- Sample graphics - replace with your actual graphics -->
+            <div class="graphic-card">
+                <h3 class="graphic-title">Championship Poster</h3>
+                <img src="https://via.placeholder.com/1080x1080/1a1a1a/ffffff?text=Championship+Poster" alt="Championship Poster" class="graphic-image" onclick="openModal(this, 'Championship Poster')">
+            </div>
+
+            <div class="graphic-card">
+                <h3 class="graphic-title">Player Stats</h3>
+                <img src="https://via.placeholder.com/1080x1080/2a2a2a/ffffff?text=Player+Stats" alt="Player Stats" class="graphic-image" onclick="openModal(this, 'Player Stats')">
+            </div>
+
+            <div class="graphic-card">
+                <h3 class="graphic-title">Game Day Promo</h3>
+                <img src="https://via.placeholder.com/1080x1080/1a1a1a/ffffff?text=Game+Day+Promo" alt="Game Day Promo" class="graphic-image" onclick="openModal(this, 'Game Day Promo')">
+            </div>
+
+            <div class="graphic-card">
+                <h3 class="graphic-title">Season Highlights</h3>
+                <img src="https://via.placeholder.com/1080x1080/2a2a2a/ffffff?text=Season+Highlights" alt="Season Highlights" class="graphic-image" onclick="openModal(this, 'Season Highlights')">
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2 class="modal-title" id="modalTitle"></h2>
+            <img id="modalImage" class="modal-image" alt="">
+            <div class="modal-controls">
+                <button class="btn btn-download" onclick="downloadImage()">
+                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 15.577l-3.539-3.538.707-.708L12 14.162l2.832-2.831.707.708L12 15.577zM6 20c-.552 0-1-.449-1-1s.448-1 1-1h12c.552 0 1 .449 1 1s-.448 1-1 1H6zm6-18C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2z"/>
+                    </svg>
+                    Download
+                </button>
+                <button class="btn btn-close" onclick="closeModal()">
+                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M18.717 6.697l-1.414-1.414L12 10.586 6.697 5.283 5.283 6.697 10.586 12l-5.303 5.303 1.414 1.414L12 13.414l5.303 5.303 1.414-1.414L13.414 12l5.303-5.303z"/>
+                    </svg>
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentImageSrc = '';
+        let currentImageTitle = '';
+
+        function openModal(img, title) {
+            const modal = document.getElementById('modal');
+            const modalImg = document.getElementById('modalImage');
+            const modalTitle = document.getElementById('modalTitle');
+            
+            currentImageSrc = img.src;
+            currentImageTitle = title;
+            
+            modal.classList.add('active');
+            modalImg.src = currentImageSrc;
+            modalImg.alt = title;
+            modalTitle.textContent = title;
+            
+            // Prevent body scroll
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('modal');
+            modal.classList.remove('active');
+            
+            // Restore body scroll
+            document.body.style.overflow = 'auto';
+        }
+
+        function downloadImage() {
+            // Create a temporary anchor element to trigger download
+            const link = document.createElement('a');
+            link.href = currentImageSrc;
+            link.download = `${currentImageTitle.replace(/\s+/g, '_')}.png`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Close modal when clicking outside the image
+        document.getElementById('modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        // Add new graphics function (you can call this to add graphics dynamically)
+        function addGraphic(imageSrc, title) {
+            const gallery = document.getElementById('gallery');
+            
+            const card = document.createElement('div');
+            card.className = 'graphic-card';
+            
+            card.innerHTML = `
+                <h3 class="graphic-title">${title}</h3>
+                <img src="${imageSrc}" alt="${title}" class="graphic-image" onclick="openModal(this, '${title}')">
+            `;
+            
+            gallery.appendChild(card);
+        }
+
+        // Example of how to add graphics programmatically:
+        // addGraphic('path/to/your/image.png', 'Your Graphic Title');
+    </script>
+</body>
+</html>
